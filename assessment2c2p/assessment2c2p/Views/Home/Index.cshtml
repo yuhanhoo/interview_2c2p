@@ -1,0 +1,105 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+
+<div id="app">
+
+    <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="UploadFile">
+        <h4>Upload File</h4>
+        <input type="file" name="file" accept=".csv,.xml" max="1048576"/>
+        <input type="submit" value="Upload" class="btn btn-primary" />
+    </form>
+
+    <br />
+    <p v-if="error.length" style="color:red;">{{ error }}</p>
+
+    <table>
+        <tr>
+            <td><br /><h4>Search by Currency</h4></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" id="currency" v-model="currency" name="currency" placeholder="Enter currency" style="width:200px;height:35px">
+            </td>
+            <td>
+                <button @@click="searchByCurrency" class="btn btn-primary">Search</button>
+            </td>
+        </tr>
+        <tr>
+            <td><br /><h4>Search by Date Range</h4></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="datetime-local" id="startDate" v-model="startDate" name="startDate" style="width: 200px; height: 35px">
+                <br />
+                <span>To</span>
+                <br />
+                <input type="datetime-local" id="endDate" v-model="endDate" name="endDate" style="width: 200px; height: 35px">
+            </td>
+            <td>
+                <button @@click="searchByDateRange" class="btn btn-primary">Search</button>
+            </td>
+        </tr>
+        <tr>
+            <td><br /><h4>Search by Status</h4></td>
+        </tr>
+        <tr>
+            <td>
+                <select id="status" v-model="status" name="status" style="width: 200px; height: 35px">
+                    <option value="" disabled selected>Select status</option>
+                    <option value="A">Approved</option>
+                    <option value="R">Failed / Rejected</option>
+                    <option value="D">Finished / Done</option>
+                </select>
+            </td>
+            <td>
+                <button @@click="searchByStatus" class="btn btn-primary">Search</button>
+            </td>
+        </tr>
+    </table>
+    <br />
+</div>
+
+<script>
+    let app = new Vue({
+        el: '#app',
+        data: {
+            currency: "",
+            startDate: "",
+            endDate: "",
+            status: "",
+            error: "",
+        },
+        methods: {
+            searchByCurrency: function () {
+                if (this.currency.length) {
+                    this.forwardNewTab("currency", this.currency);
+                } else {
+                    this.error = "Please enter currency";
+                }
+            },
+            searchByDateRange: function () {
+                if (this.startDate.length && this.endDate.length) {
+                    const url = 'api/v1/GetTransaction?mode=date&startDate=' + this.startDate + '&endDate=' + this.endDate;
+                    window.open(url, '_blank');
+                } else {
+                    this.error = "Please select start and end date";
+                }
+            },
+            searchByStatus: function () {
+                if (this.status.length) {
+                    this.forwardNewTab("status", this.status);
+                } else {
+                    this.error = "Please select status";
+                }
+            },
+            forwardNewTab: function (mode, value) {
+                this.error = "";
+                const url = 'api/v1/GetTransaction?mode=' + mode + '&value=' + value;
+                window.open(url, '_blank');
+            }
+        }
+    });
+</script>
