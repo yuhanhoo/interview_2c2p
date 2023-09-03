@@ -9,3 +9,6 @@ Database: MySQL
 
 There are 2 test file (1 xml and 1 csv) inside the project folder
 assessment2c2p > assessment2c2p > TestCSV.csv & TestXML.csv
+
+DB Schema path: 
+assessment2c2p > assessment2c2p > DBSchema.sql
